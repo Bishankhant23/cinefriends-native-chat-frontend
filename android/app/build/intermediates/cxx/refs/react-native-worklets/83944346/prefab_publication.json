@@ -1,0 +1,27 @@
+{
+  "installationFolder": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-worklets/android/build/intermediates/prefab_package/debug/prefab",
+  "gradlePath": ":react-native-worklets",
+  "packageInfo": {
+    "packageName": "react-native-worklets",
+    "packageVersion": "0.10.3",
+    "packageSchemaVersion": 2,
+    "packageDependencies": [],
+    "modules": [
+      {
+        "moduleName": "worklets",
+        "moduleHeaders": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-worklets/android/build/prefab-headers/worklets",
+        "moduleExportLibraries": [],
+        "abis": [
+          {
+            "abiName": "x86_64",
+            "abiApi": 24,
+            "abiNdkMajor": 27,
+            "abiStl": "c++_shared",
+            "abiLibrary": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-worklets/android/build/intermediates/cxx/Debug/4h5l5n50/obj/x86_64/libworklets.so",
+            "abiAndroidGradleBuildJsonFile": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-worklets/android/.cxx/Debug/4h5l5n50/x86_64/android_gradle_build.json"
+          }
+        ]
+      }
+    ]
+  }
+}

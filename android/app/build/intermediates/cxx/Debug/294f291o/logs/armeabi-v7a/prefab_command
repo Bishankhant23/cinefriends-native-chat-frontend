@@ -1,0 +1,23 @@
+/Users/smit/Library/Java/JavaVirtualMachines/jbr-21.0.9/Contents/Home/bin/java \
+  --class-path \
+  /Users/smit/.gradle/caches/modules-2/files-2.1/com.google.prefab/cli/2.1.0/aa32fec809c44fa531f01dcfb739b5b3304d3050/cli-2.1.0-all.jar \
+  com.google.prefab.cli.AppKt \
+  --build-system \
+  cmake \
+  --platform \
+  android \
+  --abi \
+  armeabi-v7a \
+  --os-version \
+  24 \
+  --stl \
+  c++_shared \
+  --ndk-version \
+  27 \
+  --output \
+  /var/folders/rp/yrn0rv3x4zn1p2v40t4n1_zc0000gn/T/agp-prefab-staging16570820213786381015/staged-cli-output \
+  /Users/smit/bishan/TS/learning/cinefriendzchat/frontend/android/app/build/intermediates/cxx/refs/react-native-reanimated/4t6b6n2z \
+  /Users/smit/bishan/TS/learning/cinefriendzchat/frontend/android/app/build/intermediates/cxx/refs/react-native-worklets/3o12j3u2 \
+  /Users/smit/.gradle/caches/9.3.1/transforms/0110b0c693d5ae6a06de04e699395226/transformed/react-android-0.83.10-debug/prefab \
+  /Users/smit/.gradle/caches/9.3.1/transforms/99d78a3ebe3f31f9bbb9977f2c0f7d8a/transformed/hermes-android-0.14.1-debug/prefab \
+  /Users/smit/.gradle/caches/9.3.1/transforms/7469710121e397a0ad0256d196448200/transformed/fbjni-0.7.0/prefab

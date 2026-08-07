@@ -1,0 +1,50 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: 'class',
+  content: [
+    "./App.{js,jsx,ts,tsx}",
+    "./screens/**/*.{js,jsx,ts,tsx}",
+    "./components/**/*.{js,jsx,ts,tsx}",
+    "./navigation/**/*.{js,jsx,ts,tsx}"
+  ],
+  presets: [require("nativewind/preset")],
+  theme: {
+    extend: {
+      colors: {
+        khaki: "#CBBD93",
+        cream: "#FAE8B4",
+        mutedBrown: "#80775C",
+        deepBrown: "#574A24",
+        darkBg: "#0F0E0B", 
+        darkSurface: "#1C1B17", 
+        darkElevated: "#2A2922", 
+        offWhite: "#F5F2E9",
+        gray400: "#706D63",
+        gray500: "#A39B8A",
+        primary: "#CBBD93",      
+        primaryContrast: "#0F0E0B",
+        accent: "#80775C",
+        background: "#0F0E0B",     
+        surface: "#1C1B17",   
+        elevated: "#2A2922",
+        textPrimary: "#F5F2E9",
+        textSecondary: "#A39B8A",
+        textTertiary: "#706D63",
+        border: "#2D2B24",
+        subtle: "#2A2922",
+        success: "#4ADE80",
+        danger: "#F87171",
+        whatsappGreen: "#25D366",
+        whatsappBubble: "#1F2C23",
+      },
+      spacing: {
+        xs: "4px",
+        sm: "8px",
+        md: "16px",
+        lg: "24px",
+        xl: "32px",
+      },
+    },
+  },
+  plugins: [],
+}

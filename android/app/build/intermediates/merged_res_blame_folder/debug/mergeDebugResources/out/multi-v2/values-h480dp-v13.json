@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.tempapp-mergeDebugResources-43:/values-h480dp-v13/values-h480dp-v13.xml",
+            "map": [
+                {
+                    "source": "/Users/smit/.gradle/caches/9.3.1/transforms/2b35e94f6644c54a62d58d176dde2a5b/transformed/material-1.13.0/res/values-h480dp-v13/values-h480dp-v13.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,128,198,270",
+                        "endColumns": "72,69,71,69",
+                        "endOffsets": "123,193,265,335"
+                    }
+                }
+            ]
+        }
+    ]
+}

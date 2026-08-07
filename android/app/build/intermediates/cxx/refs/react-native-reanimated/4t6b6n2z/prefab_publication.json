@@ -1,0 +1,27 @@
+{
+  "installationFolder": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-reanimated/android/build/intermediates/prefab_package/debug/prefab",
+  "gradlePath": ":react-native-reanimated",
+  "packageInfo": {
+    "packageName": "react-native-reanimated",
+    "packageVersion": "4.5.3",
+    "packageSchemaVersion": 2,
+    "packageDependencies": [],
+    "modules": [
+      {
+        "moduleName": "reanimated",
+        "moduleHeaders": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-reanimated/android/build/prefab-headers/reanimated",
+        "moduleExportLibraries": [],
+        "abis": [
+          {
+            "abiName": "armeabi-v7a",
+            "abiApi": 24,
+            "abiNdkMajor": 27,
+            "abiStl": "c++_shared",
+            "abiLibrary": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-reanimated/android/build/intermediates/cxx/Debug/361u60p1/obj/armeabi-v7a/libreanimated.so",
+            "abiAndroidGradleBuildJsonFile": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-reanimated/android/.cxx/Debug/361u60p1/armeabi-v7a/android_gradle_build.json"
+          }
+        ]
+      }
+    ]
+  }
+}
