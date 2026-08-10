@@ -40,8 +40,8 @@ export default function SearchInput({ containerStyle, style, onFocus, onBlur, ..
             color: '#F5F2E9',
             fontSize: 14,
             paddingVertical: 0,
+            outlineStyle: 'none',
           },
-          Platform.OS === 'web' ? ({ outlineWidth: 0 } as any) : null,
           style,
         ]}
         onFocus={(e) => {

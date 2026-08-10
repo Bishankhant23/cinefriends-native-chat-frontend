@@ -21,6 +21,10 @@ export const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) =>
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isUsernameFocused, setIsUsernameFocused] = useState(false);
+  const [isDisplayNameFocused, setIsDisplayNameFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const handleRegister = () => {
     if (!email.trim() || !username.trim() || !password.trim()) return;
@@ -62,8 +66,24 @@ export const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) =>
         ) : null}
 
         <View style={{ gap: 12 }}>
-          <View style={{ backgroundColor: '#1C1B17', borderWidth: 1, borderColor: '#2D2B24', borderRadius: 12, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12 }}>
-            <Mail color="#80775C" size={20} />
+          <View
+            style={{
+              backgroundColor: '#1C1B17',
+              borderWidth: 1,
+              borderColor: isEmailFocused ? '#CBBD93' : '#2D2B24',
+              borderRadius: 12,
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+              shadowColor: '#CBBD93',
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: isEmailFocused ? 0.15 : 0,
+              shadowRadius: 6,
+              elevation: isEmailFocused ? 2 : 0,
+            }}
+          >
+            <Mail color={isEmailFocused ? '#CBBD93' : '#80775C'} size={20} />
             <TextInput
               placeholder="Email"
               placeholderTextColor="#706D63"
@@ -74,12 +94,30 @@ export const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) =>
               }}
               autoCapitalize="none"
               keyboardType="email-address"
-              style={{ flex: 1, marginLeft: 12, color: '#F5F2E9', fontSize: 16 }}
+              style={{ flex: 1, marginLeft: 12, color: '#F5F2E9', fontSize: 16, outlineStyle: 'none' } as any}
+              onFocus={() => setIsEmailFocused(true)}
+              onBlur={() => setIsEmailFocused(false)}
             />
           </View>
 
-          <View style={{ backgroundColor: '#1C1B17', borderWidth: 1, borderColor: '#2D2B24', borderRadius: 12, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12 }}>
-            <User color="#80775C" size={20} />
+          <View
+            style={{
+              backgroundColor: '#1C1B17',
+              borderWidth: 1,
+              borderColor: isUsernameFocused ? '#CBBD93' : '#2D2B24',
+              borderRadius: 12,
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+              shadowColor: '#CBBD93',
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: isUsernameFocused ? 0.15 : 0,
+              shadowRadius: 6,
+              elevation: isUsernameFocused ? 2 : 0,
+            }}
+          >
+            <User color={isUsernameFocused ? '#CBBD93' : '#80775C'} size={20} />
             <TextInput
               placeholder="Username"
               placeholderTextColor="#706D63"
@@ -89,23 +127,59 @@ export const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) =>
                 if (error) dispatch(clearError());
               }}
               autoCapitalize="none"
-              style={{ flex: 1, marginLeft: 12, color: '#F5F2E9', fontSize: 16 }}
+              style={{ flex: 1, marginLeft: 12, color: '#F5F2E9', fontSize: 16, outlineStyle: 'none' } as any}
+              onFocus={() => setIsUsernameFocused(true)}
+              onBlur={() => setIsUsernameFocused(false)}
             />
           </View>
 
-          <View style={{ backgroundColor: '#1C1B17', borderWidth: 1, borderColor: '#2D2B24', borderRadius: 12, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12 }}>
-            <UserCheck color="#80775C" size={20} />
+          <View
+            style={{
+              backgroundColor: '#1C1B17',
+              borderWidth: 1,
+              borderColor: isDisplayNameFocused ? '#CBBD93' : '#2D2B24',
+              borderRadius: 12,
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+              shadowColor: '#CBBD93',
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: isDisplayNameFocused ? 0.15 : 0,
+              shadowRadius: 6,
+              elevation: isDisplayNameFocused ? 2 : 0,
+            }}
+          >
+            <UserCheck color={isDisplayNameFocused ? '#CBBD93' : '#80775C'} size={20} />
             <TextInput
               placeholder="Display Name (Optional)"
               placeholderTextColor="#706D63"
               value={name}
               onChangeText={setName}
-              style={{ flex: 1, marginLeft: 12, color: '#F5F2E9', fontSize: 16 }}
+              style={{ flex: 1, marginLeft: 12, color: '#F5F2E9', fontSize: 16, outlineStyle: 'none' } as any}
+              onFocus={() => setIsDisplayNameFocused(true)}
+              onBlur={() => setIsDisplayNameFocused(false)}
             />
           </View>
 
-          <View style={{ backgroundColor: '#1C1B17', borderWidth: 1, borderColor: '#2D2B24', borderRadius: 12, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12 }}>
-            <Lock color="#80775C" size={20} />
+          <View
+            style={{
+              backgroundColor: '#1C1B17',
+              borderWidth: 1,
+              borderColor: isPasswordFocused ? '#CBBD93' : '#2D2B24',
+              borderRadius: 12,
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+              shadowColor: '#CBBD93',
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: isPasswordFocused ? 0.15 : 0,
+              shadowRadius: 6,
+              elevation: isPasswordFocused ? 2 : 0,
+            }}
+          >
+            <Lock color={isPasswordFocused ? '#CBBD93' : '#80775C'} size={20} />
             <TextInput
               placeholder="Password"
               placeholderTextColor="#706D63"
@@ -115,7 +189,9 @@ export const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) =>
                 setPassword(text);
                 if (error) dispatch(clearError());
               }}
-              style={{ flex: 1, marginLeft: 12, color: '#F5F2E9', fontSize: 16 }}
+              style={{ flex: 1, marginLeft: 12, color: '#F5F2E9', fontSize: 16, outlineStyle: 'none' } as any}
+              onFocus={() => setIsPasswordFocused(true)}
+              onBlur={() => setIsPasswordFocused(false)}
             />
           </View>
 

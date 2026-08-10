@@ -20,6 +20,7 @@ export const ChatsListScreen: React.FC<{ navigation: any }> = ({ navigation }) =
   const { myTopics, isLoading } = useAppSelector((state) => state.topic);
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   useEffect(() => {
     dispatch(fetchMyTopicsThunk());
@@ -55,13 +56,26 @@ export const ChatsListScreen: React.FC<{ navigation: any }> = ({ navigation }) =
 
       {/* Search Input Filter */}
       <View className="px-4 py-3 bg-darkBg">
-        <View className="bg-darkSurface border border-border rounded-xl flex-row items-center px-3.5 py-2.5">
-          <Search color="#706D63" size={18} />
+        <View
+          style={{
+            borderColor: isSearchFocused ? '#CBBD93' : '#2D2B24',
+            shadowColor: '#CBBD93',
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: isSearchFocused ? 0.12 : 0,
+            shadowRadius: 6,
+            elevation: isSearchFocused ? 2 : 0,
+          }}
+          className="bg-darkSurface border rounded-xl flex-row items-center px-3.5 py-2.5"
+        >
+          <Search color={isSearchFocused ? '#CBBD93' : '#706D63'} size={18} />
           <TextInput
             placeholder="Search joined movie topics..."
             placeholderTextColor="#706D63"
             value={searchQuery}
             onChangeText={setSearchQuery}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
+            style={{ outlineStyle: 'none' } as any}
             className="flex-1 ml-2.5 text-offWhite text-sm"
           />
         </View>
