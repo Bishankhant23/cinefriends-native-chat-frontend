@@ -37,6 +37,8 @@ import {
   ChatMessage,
   leaveTopicThunk,
   clearActiveTopic,
+  setActiveSubTopic,
+  markSubTopicAsRead,
 } from '../../store/slices/topicSlice';
 import socketClient from '../../services/socketClient';
 import { ChatMessageBubble } from '../../components/ChatMessageBubble';
@@ -61,7 +63,8 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
   const flatListRef = useRef<FlatList>(null);
 
   const currentUser = useAppSelector((state) => state.user.user);
-  const { activeMessages, activeTopic, isMessagesLoading } = useAppSelector((state) => state.topic);
+  const { activeMessages, activeTopic, isMessagesLoading, myTopics } = useAppSelector((state) => state.topic);
+  const currentTopicInList = myTopics.find((t) => t.tmdbId === Number(tmdbId));
 
   const [inputMessage, setInputMessage] = useState('');
   const [infoModalVisible, setInfoModalVisible] = useState(false);
@@ -69,19 +72,29 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
   const [isSpoiler, setIsSpoiler] = useState(false);
   const [filterDrawerVisible, setFilterDrawerVisible] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null);
 
   useEffect(() => {
+    // Update active subtopic in Redux and reset locally
+    dispatch(setActiveSubTopic(subTopic));
+    dispatch(markSubTopicAsRead({ tmdbId: Number(tmdbId), subTopic }));
+
     // 1. Fetch initial message history
     dispatch(fetchTopicMessagesThunk({ tmdbId, subTopic, isSpoiler }));
 
     // 2. Connect Socket.io & Join room
     const socket = socketClient.connect();
     if (currentUser) {
-      socketClient.joinTopicRoom(tmdbId, currentUser.id);
+      socketClient.joinTopicRoom(tmdbId, currentUser.id, subTopic);
     }
 
     // 3. Listen for incoming real-time messages
     socketClient.onReceiveMessage((newMsg: ChatMessage) => {
+      if (newMsg.senderId === currentUser?.id) {
+        setIsSending(false);
+      }
+
       // Only append message if it matches active filter!
       if (
         (newMsg.subTopic || 'general') === subTopic &&
@@ -104,7 +117,17 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
   }, [tmdbId, currentUser, dispatch, subTopic, isSpoiler]);
 
   const handleSendMessage = () => {
-    if (!inputMessage.trim() || !currentUser) return;
+    if (!inputMessage.trim() || !currentUser || isSending) return;
+
+    setIsSending(true);
+
+    console.log('DEBUG: handleSendMessage called', {
+      inputMessage,
+      replyingTo,
+      replyToId: replyingTo?.id || null,
+      replyToUser: replyingTo?.sender?.username || null,
+      replyToContent: replyingTo?.content || null,
+    });
 
     const messageData = {
       tmdbId: Number(tmdbId),
@@ -113,10 +136,19 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
       messageType: 'TEXT',
       subTopic,
       isSpoiler,
+      replyToId: replyingTo?.id || null,
+      replyToUser: replyingTo?.sender?.username || null,
+      replyToContent: replyingTo?.content || null,
     };
 
     socketClient.sendTopicMessage(messageData);
     setInputMessage('');
+    setReplyingTo(null);
+
+    // Fallback timeout to reset sending state
+    setTimeout(() => {
+      setIsSending(false);
+    }, 1500);
   };
 
   return (
@@ -202,16 +234,41 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
           contentContainerStyle={{ paddingVertical: 12 }}
           onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
           renderItem={({ item }) => (
-            <ChatMessageBubble message={item} isSelf={item.senderId === currentUser?.id} />
+            <ChatMessageBubble
+              message={item}
+              isSelf={item.senderId === currentUser?.id}
+              onLongPress={() => setReplyingTo(item)}
+            />
           )}
         />
       )}
 
-      {/* WhatsApp Message Input Bar */}
-      <View
-        style={{ paddingBottom: Math.max(insets.bottom, 12), paddingTop: 12, paddingHorizontal: 12 }}
-        className="bg-darkSurface border-t border-border flex-row items-center"
-      >
+      {/* WhatsApp Message Input Bar Container */}
+      <View className="bg-darkSurface border-t border-border">
+        {/* Reply Preview Bar */}
+        {replyingTo && (
+          <View className="flex-row items-center justify-between px-4 py-2.5 bg-[#1C1A16] border-b border-[#2E2C26]">
+            <View className="border-l-2 border-[#CBBD93] pl-2.5 flex-1 pr-4">
+              <Text className="text-[#CBBD93] font-bold text-[10px] uppercase tracking-wider">
+                Replying to @{replyingTo.sender?.username || 'CineFriend'}
+              </Text>
+              <Text className="text-[#9C988F] text-xs mt-0.5" numberOfLines={1}>
+                {replyingTo.content}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => setReplyingTo(null)}
+              className="p-1 rounded-full bg-darkElevated border border-border"
+            >
+              <X color="#F5F2E9" size={12} />
+            </TouchableOpacity>
+          </View>
+        )}
+ 
+        <View
+          style={{ paddingBottom: Math.max(insets.bottom, 12), paddingTop: 12, paddingHorizontal: 12 }}
+          className="flex-row items-center"
+        >
         <View
           style={
             isInputFocused
@@ -257,14 +314,19 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={handleSendMessage}
-          disabled={!inputMessage.trim()}
+          disabled={!inputMessage.trim() || isSending}
           className={`w-12 h-12 rounded-2xl items-center justify-center shadow-lg ${
-            inputMessage.trim() ? 'bg-khaki' : 'bg-darkElevated border border-border'
+            inputMessage.trim() && !isSending ? 'bg-khaki' : 'bg-darkElevated border border-border'
           }`}
         >
-          <Send color={inputMessage.trim() ? '#0F0E0B' : '#706D63'} size={20} />
+          {isSending ? (
+            <ActivityIndicator size="small" color="#0F0E0B" />
+          ) : (
+            <Send color={inputMessage.trim() ? '#0F0E0B' : '#706D63'} size={20} />
+          )}
         </TouchableOpacity>
       </View>
+    </View>
 
       {/* Filter Drawer Modal (Bottom Sheet style) */}
       <Modal
@@ -287,8 +349,7 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
             {/* Handle Bar */}
             <View className="w-12 h-1 bg-border rounded-full self-center mb-5" />
 
-            <View className="flex-row items-center justify-between mb-5">
-              <Text className="text-offWhite font-bold text-lg">Movie Chat Filters</Text>
+            <View className="flex-row items-center justify-end mb-4">
               <TouchableOpacity
                 onPress={() => setFilterDrawerVisible(false)}
                 className="bg-darkElevated p-2 rounded-full border border-border"
@@ -298,7 +359,6 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
             </View>
 
             {/* Spoiler Toggles */}
-            <Text className="text-[#CBBD93] text-xs font-bold uppercase tracking-wider mb-2.5">Spoiler Filter</Text>
             <View className="flex-row bg-darkBg border border-border p-1 rounded-xl mb-6">
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -331,43 +391,61 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
             </View>
 
             {/* Sub-Topics Selector */}
-            <Text className="text-[#CBBD93] text-xs font-bold uppercase tracking-wider mb-2.5">Topic Channels</Text>
-            <View className="flex-row flex-wrap justify-between">
+            <View className="w-full">
               {SUB_TOPICS.map((topic) => {
                 const isSelected = subTopic === topic.id;
                 const IconComponent = topic.icon;
+                const unreadField = 
+                  topic.id === 'general' ? currentTopicInList?.unreadGeneral :
+                  topic.id === 'acting' ? currentTopicInList?.unreadActing :
+                  topic.id === 'cinematography' ? currentTopicInList?.unreadCinematography :
+                  topic.id === 'plot' ? currentTopicInList?.unreadPlot :
+                  topic.id === 'music' ? currentTopicInList?.unreadMusic :
+                  topic.id === 'vfx' ? currentTopicInList?.unreadVfx : 0;
                 return (
                   <TouchableOpacity
                     key={topic.id}
-                    activeOpacity={0.8}
+                    activeOpacity={0.7}
                     onPress={() => {
                       setSubTopic(topic.id);
                       setFilterDrawerVisible(false);
+                      dispatch(setActiveSubTopic(topic.id));
+                      dispatch(markSubTopicAsRead({ tmdbId: Number(tmdbId), subTopic: topic.id }));
                     }}
-                    style={{ width: '48%' }}
-                    className={`py-3 px-4 rounded-xl mb-3 border flex-row items-center justify-between ${
+                    className={`py-3.5 px-4 rounded-xl mb-2 border flex-row items-center justify-between ${
                       isSelected
-                        ? 'bg-khaki/10 border-khaki'
-                        : 'bg-darkElevated border-border/60'
+                        ? 'bg-[#CBBD93]/10 border-[#CBBD93]'
+                        : 'bg-[#1C1A16] border-[#2E2C26]'
                     }`}
                   >
                     <View className="flex-row items-center flex-1">
                       <IconComponent
-                        size={16}
-                        color={isSelected ? '#CBBD93' : '#706D63'}
-                        style={{ marginRight: 8 }}
+                        size={18}
+                        color={isSelected ? '#CBBD93' : '#8A867C'}
+                        style={{ marginRight: 12 }}
                       />
                       <Text
-                        className={`text-sm font-semibold ${
-                          isSelected ? 'text-khaki font-bold' : 'text-gray400'
+                        className={`text-sm font-semibold tracking-wide ${
+                          isSelected ? 'text-[#CBBD93] font-bold' : 'text-[#AFAAA0]'
                         }`}
                       >
                         {topic.label}
                       </Text>
                     </View>
-                    {isSelected && (
-                      <View className="w-2 h-2 rounded-full bg-khaki" />
-                    )}
+                    
+                    <View className="flex-row items-center">
+                      {!isSelected && unreadField && unreadField > 0 ? (
+                        <View className="bg-[#CBBD93] px-2 py-0.5 rounded-full items-center justify-center min-w-[20px] mr-2">
+                          <Text className="text-[#0F0E0B] text-[10px] font-bold">
+                            {unreadField}
+                          </Text>
+                        </View>
+                      ) : null}
+                      
+                      {isSelected && (
+                        <View className="w-2.5 h-2.5 rounded-full bg-[#CBBD93]" />
+                      )}
+                    </View>
                   </TouchableOpacity>
                 );
               })}

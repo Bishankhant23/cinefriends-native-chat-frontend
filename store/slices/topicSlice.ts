@@ -13,6 +13,13 @@ export interface Topic {
   lastMessage?: string;
   lastMessageAt?: string;
   isJoined?: boolean;
+  unreadCount?: number;
+  unreadGeneral?: number;
+  unreadActing?: number;
+  unreadCinematography?: number;
+  unreadPlot?: number;
+  unreadMusic?: number;
+  unreadVfx?: number;
 }
 
 export interface ChatMessage {
@@ -31,6 +38,9 @@ export interface ChatMessage {
     name?: string;
     profilePic?: string;
   };
+  replyToId?: string;
+  replyToUser?: string;
+  replyToContent?: string;
 }
 
 interface TopicState {
@@ -40,6 +50,7 @@ interface TopicState {
   searchResults: Topic[];
   activeMessages: ChatMessage[];
   activeTopic: Topic | null;
+  activeSubTopic: string;
   isLoading: boolean;
   isMessagesLoading: boolean;
   error: string | null;
@@ -52,6 +63,7 @@ const initialState: TopicState = {
   searchResults: [],
   activeMessages: [],
   activeTopic: null,
+  activeSubTopic: 'general',
   isLoading: false,
   isMessagesLoading: false,
   error: null,
@@ -175,10 +187,99 @@ const topicSlice = createSlice({
     },
     setActiveTopic: (state, action: PayloadAction<Topic | null>) => {
       state.activeTopic = action.payload;
+      if (action.payload) {
+        const topicIndex = state.myTopics.findIndex((t) => t.tmdbId === action.payload!.tmdbId);
+        if (topicIndex !== -1) {
+          state.myTopics[topicIndex].unreadCount = 0;
+        }
+      }
+    },
+    setActiveSubTopic: (state, action: PayloadAction<string>) => {
+      state.activeSubTopic = action.payload;
+    },
+    updateTopicLastMessage: (
+      state,
+      action: PayloadAction<{
+        tmdbId: number;
+        lastMessage: string;
+        lastMessageAt: string;
+        senderId: string;
+        currentUserId: string;
+        isActiveTopic: boolean;
+        subTopic?: string;
+        activeSubTopic?: string;
+      }>
+    ) => {
+      const { tmdbId, lastMessage, lastMessageAt, senderId, currentUserId, isActiveTopic, subTopic, activeSubTopic } = action.payload;
+      const topicIndex = state.myTopics.findIndex((t) => t.tmdbId === tmdbId);
+      if (topicIndex !== -1) {
+        state.myTopics[topicIndex].lastMessage = lastMessage;
+        state.myTopics[topicIndex].lastMessageAt = lastMessageAt;
+
+        if (senderId !== currentUserId) {
+          const cleanSubTopic = subTopic || 'general';
+          const isUserViewingThisMessageContext = isActiveTopic && activeSubTopic === cleanSubTopic;
+
+          if (!isUserViewingThisMessageContext) {
+            state.myTopics[topicIndex].unreadCount = (state.myTopics[topicIndex].unreadCount || 0) + 1;
+
+            if (cleanSubTopic === 'general') state.myTopics[topicIndex].unreadGeneral = (state.myTopics[topicIndex].unreadGeneral || 0) + 1;
+            else if (cleanSubTopic === 'acting') state.myTopics[topicIndex].unreadActing = (state.myTopics[topicIndex].unreadActing || 0) + 1;
+            else if (cleanSubTopic === 'cinematography') state.myTopics[topicIndex].unreadCinematography = (state.myTopics[topicIndex].unreadCinematography || 0) + 1;
+            else if (cleanSubTopic === 'plot') state.myTopics[topicIndex].unreadPlot = (state.myTopics[topicIndex].unreadPlot || 0) + 1;
+            else if (cleanSubTopic === 'music') state.myTopics[topicIndex].unreadMusic = (state.myTopics[topicIndex].unreadMusic || 0) + 1;
+            else if (cleanSubTopic === 'vfx') state.myTopics[topicIndex].unreadVfx = (state.myTopics[topicIndex].unreadVfx || 0) + 1;
+          }
+        }
+
+        // Re-sort the topics: latest lastMessageAt at the top
+        state.myTopics.sort((a, b) => {
+          const timeA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
+          const timeB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
+          return timeB - timeA;
+        });
+      }
+    },
+    markSubTopicAsRead: (
+      state,
+      action: PayloadAction<{
+        tmdbId: number;
+        subTopic: string;
+      }>
+    ) => {
+      const { tmdbId, subTopic } = action.payload;
+      const topicIndex = state.myTopics.findIndex((t) => t.tmdbId === tmdbId);
+      if (topicIndex !== -1) {
+        let decrementCount = 0;
+        const cleanSubTopic = subTopic || 'general';
+
+        if (cleanSubTopic === 'general') {
+          decrementCount = state.myTopics[topicIndex].unreadGeneral || 0;
+          state.myTopics[topicIndex].unreadGeneral = 0;
+        } else if (cleanSubTopic === 'acting') {
+          decrementCount = state.myTopics[topicIndex].unreadActing || 0;
+          state.myTopics[topicIndex].unreadActing = 0;
+        } else if (cleanSubTopic === 'cinematography') {
+          decrementCount = state.myTopics[topicIndex].unreadCinematography || 0;
+          state.myTopics[topicIndex].unreadCinematography = 0;
+        } else if (cleanSubTopic === 'plot') {
+          decrementCount = state.myTopics[topicIndex].unreadPlot || 0;
+          state.myTopics[topicIndex].unreadPlot = 0;
+        } else if (cleanSubTopic === 'music') {
+          decrementCount = state.myTopics[topicIndex].unreadMusic || 0;
+          state.myTopics[topicIndex].unreadMusic = 0;
+        } else if (cleanSubTopic === 'vfx') {
+          decrementCount = state.myTopics[topicIndex].unreadVfx || 0;
+          state.myTopics[topicIndex].unreadVfx = 0;
+        }
+
+        state.myTopics[topicIndex].unreadCount = Math.max(0, (state.myTopics[topicIndex].unreadCount || 0) - decrementCount);
+      }
     },
     clearActiveTopic: (state) => {
       state.activeTopic = null;
       state.activeMessages = [];
+      state.activeSubTopic = 'general';
     },
     clearSearchResults: (state) => {
       state.searchResults = [];
@@ -247,5 +348,5 @@ const topicSlice = createSlice({
   },
 });
 
-export const { addRealtimeMessage, setActiveTopic, clearSearchResults, clearActiveTopic } = topicSlice.actions;
+export const { addRealtimeMessage, setActiveTopic, setActiveSubTopic, updateTopicLastMessage, clearSearchResults, clearActiveTopic, markSubTopicAsRead } = topicSlice.actions;
 export default topicSlice.reducer;

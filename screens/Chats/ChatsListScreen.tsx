@@ -87,21 +87,33 @@ export const ChatsListScreen: React.FC<{ navigation: any }> = ({ navigation }) =
           <ActivityIndicator size="large" color="#CBBD93" />
         </View>
       ) : filteredTopics.length === 0 ? (
-        <View className="flex-1 items-center justify-center px-8">
-          <View className="w-16 h-16 bg-darkSurface border border-khaki/20 rounded-full items-center justify-center mb-4">
-            <MessageSquare color="#80775C" size={32} />
+        searchQuery ? (
+          <View className="flex-1 items-center justify-center px-8">
+            <View className="w-16 h-16 bg-darkSurface border border-khaki/20 rounded-full items-center justify-center mb-4">
+              <Search color="#80775C" size={30} />
+            </View>
+            <Text className="text-offWhite font-bold text-lg text-center">No Matching Topics</Text>
+            <Text className="text-gray500 text-xs text-center mt-2 leading-5">
+              We couldn't find any joined movie topic matching "{searchQuery}".
+            </Text>
           </View>
-          <Text className="text-offWhite font-bold text-lg text-center">No Movie Topics Joined</Text>
-          <Text className="text-gray500 text-xs text-center mt-2 leading-5">
-            Search any movie to join its dedicated public chat topic and start discussing with other movie lovers!
-          </Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ExploreTopics')}
-            className="bg-khaki px-5 py-3 rounded-xl mt-6 shadow-md"
-          >
-            <Text className="text-darkBg font-bold text-sm">Explore Movie Topics</Text>
-          </TouchableOpacity>
-        </View>
+        ) : (
+          <View className="flex-1 items-center justify-center px-8">
+            <View className="w-16 h-16 bg-darkSurface border border-khaki/20 rounded-full items-center justify-center mb-4">
+              <MessageSquare color="#80775C" size={32} />
+            </View>
+            <Text className="text-offWhite font-bold text-lg text-center">No Movie Topics Joined</Text>
+            <Text className="text-gray500 text-xs text-center mt-2 leading-5">
+              Search any movie to join its dedicated public chat topic and start discussing with other movie lovers!
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ExploreTopics')}
+              className="bg-khaki px-5 py-3 rounded-xl mt-6 shadow-md"
+            >
+              <Text className="text-darkBg font-bold text-sm">Explore Movie Topics</Text>
+            </TouchableOpacity>
+          </View>
+        )
       ) : (
         <FlatList
           data={filteredTopics}

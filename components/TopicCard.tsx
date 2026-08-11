@@ -59,13 +59,24 @@ export const TopicCard: React.FC<TopicCardProps> = ({
             {topic.title}
           </Text>
           {!isExplore && formattedTime ? (
-            <Text className="text-gray500 text-xs">{formattedTime}</Text>
+            <Text className={topic.unreadCount && topic.unreadCount > 0 ? "text-khaki text-xs font-semibold" : "text-gray500 text-xs"}>
+              {formattedTime}
+            </Text>
           ) : null}
         </View>
 
-        <Text className="text-gray400 text-xs mt-0.5" numberOfLines={1}>
-          {topic.lastMessage || topic.overview || 'Join the movie topic discussion...'}
-        </Text>
+        <View className="flex-row items-center justify-between mt-0.5">
+          <Text className="text-gray400 text-xs flex-1 pr-2" numberOfLines={1}>
+            {topic.lastMessage || topic.overview || 'Join the movie topic discussion...'}
+          </Text>
+          {!isExplore && topic.unreadCount && topic.unreadCount > 0 ? (
+            <View className="bg-khaki w-5 h-5 rounded-full items-center justify-center ml-2">
+              <Text className="text-darkBg text-[10px] font-bold">
+                {topic.unreadCount}
+              </Text>
+            </View>
+          ) : null}
+        </View>
       </View>
 
       {/* Join Action for Explore Tab */}

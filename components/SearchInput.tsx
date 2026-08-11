@@ -41,7 +41,7 @@ export default function SearchInput({ containerStyle, style, onFocus, onBlur, ..
             fontSize: 14,
             paddingVertical: 0,
             outlineStyle: 'none',
-          },
+          } as any,
           style,
         ]}
         onFocus={(e) => {

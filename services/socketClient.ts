@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import { Platform } from 'react-native';
 
-const SOCKET_URL = 'https://cinefriends-native-chat-backend.onrender.com'; // Platform.OS === 'android' ? 'http://10.0.2.2:5001' : 'http://localhost:5001';
+const SOCKET_URL = 'http://localhost:5001'; // 'https://cinefriends-native-chat-backend.onrender.com';
 
 class SocketClient {
   private socket: Socket | null = null;
@@ -24,8 +24,12 @@ class SocketClient {
     return this.socket;
   }
 
-  joinTopicRoom(tmdbId: number, userId: string) {
-    this.socket?.emit('join_topic_room', { tmdbId, userId });
+  registerUser(userId: string) {
+    this.socket?.emit('register_user', { userId });
+  }
+
+  joinTopicRoom(tmdbId: number, userId: string, subTopic?: string) {
+    this.socket?.emit('join_topic_room', { tmdbId, userId, subTopic });
   }
 
   leaveTopicRoom(tmdbId: number, userId: string) {
@@ -39,6 +43,9 @@ class SocketClient {
     messageType?: string;
     subTopic?: string;
     isSpoiler?: boolean;
+    replyToId?: string | null;
+    replyToUser?: string | null;
+    replyToContent?: string | null;
   }) {
     this.socket?.emit('send_topic_message', data);
   }
