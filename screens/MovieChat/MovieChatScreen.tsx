@@ -11,6 +11,7 @@ import {
   Image,
   ScrollView,
   Modal,
+  RefreshControl,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -33,6 +34,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   fetchTopicMessagesThunk,
+  fetchOlderMessagesThunk,
   addRealtimeMessage,
   ChatMessage,
   leaveTopicThunk,
@@ -62,6 +64,11 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
   const dispatch = useAppDispatch();
   const flatListRef = useRef<FlatList>(null);
 
+  const contentHeightRef = useRef(0);
+  const prevHeightRef = useRef(0);
+  const currentScrollOffsetRef = useRef(0);
+  const shouldAdjustScrollRef = useRef(false);
+
   const currentUser = useAppSelector((state) => state.user.user);
   const { activeMessages, activeTopic, isMessagesLoading, myTopics } = useAppSelector((state) => state.topic);
   const currentTopicInList = myTopics.find((t) => t.tmdbId === Number(tmdbId));
@@ -74,14 +81,34 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  // Scroll to bottom once after initial messages finish loading
+  useEffect(() => {
+    if (!isMessagesLoading && activeMessages.length > 0) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: false });
+      }, 50);
+    }
+  }, [isMessagesLoading]);
 
   useEffect(() => {
+    // Reset paging state on channel/topic filter change
+    setHasMore(true);
+
     // Update active subtopic in Redux and reset locally
     dispatch(setActiveSubTopic(subTopic));
     dispatch(markSubTopicAsRead({ tmdbId: Number(tmdbId), subTopic }));
 
     // 1. Fetch initial message history
-    dispatch(fetchTopicMessagesThunk({ tmdbId, subTopic, isSpoiler }));
+    const fetchInitial = async () => {
+      const resultAction = await dispatch(fetchTopicMessagesThunk({ tmdbId, subTopic, isSpoiler }));
+      if (fetchTopicMessagesThunk.fulfilled.match(resultAction)) {
+        setHasMore(resultAction.payload.hasMore ?? false);
+      }
+    };
+    fetchInitial();
 
     // 2. Connect Socket.io & Join room
     const socket = socketClient.connect();
@@ -115,6 +142,42 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
       dispatch(clearActiveTopic());
     };
   }, [tmdbId, currentUser, dispatch, subTopic, isSpoiler]);
+
+  const handleLoadMore = async () => {
+    if (isLoadingMore || !hasMore || activeMessages.length === 0) return;
+
+    setIsLoadingMore(true);
+    const oldestMessage = activeMessages[0];
+    if (oldestMessage) {
+      // Record current content height before adding new messages
+      prevHeightRef.current = contentHeightRef.current;
+      shouldAdjustScrollRef.current = true;
+
+      try {
+        const resultAction = await dispatch(
+          fetchOlderMessagesThunk({
+            tmdbId: Number(tmdbId),
+            subTopic,
+            isSpoiler,
+            before: oldestMessage.createdAt,
+          })
+        );
+
+        if (fetchOlderMessagesThunk.fulfilled.match(resultAction)) {
+          const apiHasMore = resultAction.payload.hasMore;
+          setHasMore(apiHasMore ?? false);
+        } else {
+          shouldAdjustScrollRef.current = false;
+        }
+      } catch (error) {
+        console.error('Failed to load older messages:', error);
+        shouldAdjustScrollRef.current = false;
+      }
+    } else {
+      shouldAdjustScrollRef.current = false;
+    }
+    setIsLoadingMore(false);
+  };
 
   const handleSendMessage = () => {
     if (!inputMessage.trim() || !currentUser || isSending) return;
@@ -232,7 +295,55 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
           data={activeMessages}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingVertical: 12 }}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
+          maintainVisibleContentPosition={{
+            minIndexForVisible: 0,
+            autoscrollToTopThreshold: 10,
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={isLoadingMore}
+              onRefresh={handleLoadMore}
+              colors={['#CBBD93']}
+              tintColor="#CBBD93"
+            />
+          }
+          ListHeaderComponent={
+            isLoadingMore ? (
+              <View className="py-4 items-center justify-center">
+                <ActivityIndicator size="small" color="#CBBD93" />
+              </View>
+            ) : null
+          }
+          onScroll={(event) => {
+            const { contentOffset } = event.nativeEvent;
+            currentScrollOffsetRef.current = contentOffset.y;
+
+            if (
+              contentOffset.y <= 10 &&
+              !isLoadingMore &&
+              hasMore &&
+              !isMessagesLoading &&
+              activeMessages.length >= 10
+            ) {
+              handleLoadMore();
+            }
+          }}
+          scrollEventThrottle={16}
+          onContentSizeChange={(w, h) => {
+            const prevHeight = contentHeightRef.current;
+            contentHeightRef.current = h;
+
+            if (shouldAdjustScrollRef.current && prevHeight > 0) {
+              const diff = h - prevHeight;
+              if (diff > 0) {
+                flatListRef.current?.scrollToOffset({
+                  offset: currentScrollOffsetRef.current + diff,
+                  animated: false,
+                });
+              }
+              shouldAdjustScrollRef.current = false;
+            }
+          }}
           renderItem={({ item }) => (
             <ChatMessageBubble
               message={item}

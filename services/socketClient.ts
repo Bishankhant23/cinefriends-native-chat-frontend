@@ -1,7 +1,8 @@
 import { io, Socket } from 'socket.io-client';
 import { Platform } from 'react-native';
 
-const SOCKET_URL = 'http://localhost:5001'; // 'https://cinefriends-native-chat-backend.onrender.com';
+const SOCKET_URL = process.env.SOCKET_URL || 'https://cinefriends-native-chat-backend.onrender.com';
+
 
 class SocketClient {
   private socket: Socket | null = null;

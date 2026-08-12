@@ -77,7 +77,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <SafeAreaProvider>
+        <SafeAreaProvider style={{ flex: 1, height: '100%', width: '100%' }}>
           <AppInner />
         </SafeAreaProvider>
       </QueryClientProvider>

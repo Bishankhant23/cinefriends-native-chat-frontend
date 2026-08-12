@@ -1,26 +1,26 @@
 {
-  "root": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend",
-  "reactNativePath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native",
+  "root": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend",
+  "reactNativePath": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native",
   "reactNativeVersion": "0.83",
   "dependencies": {
     "@react-native-async-storage/async-storage": {
-      "root": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/@react-native-async-storage/async-storage",
+      "root": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\@react-native-async-storage\\async-storage",
       "name": "@react-native-async-storage/async-storage",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/@react-native-async-storage/async-storage/RNCAsyncStorage.podspec",
+          "podspecPath": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\@react-native-async-storage\\async-storage\\RNCAsyncStorage.podspec",
           "version": "2.2.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/@react-native-async-storage/async-storage/android",
+          "sourceDir": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\@react-native-async-storage\\async-storage\\android",
           "packageImportPath": "import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;",
           "packageInstance": "new AsyncStoragePackage()",
           "buildTypes": [],
           "libraryName": "rnasyncstorage",
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/bishan/cine-friends-native/cinefriends-native-chat-frontend/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -29,17 +29,17 @@
       }
     },
     "react-native-gesture-handler": {
-      "root": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-gesture-handler",
+      "root": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-gesture-handler",
       "name": "react-native-gesture-handler",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-gesture-handler/RNGestureHandler.podspec",
+          "podspecPath": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-gesture-handler\\RNGestureHandler.podspec",
           "version": "2.32.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-gesture-handler/android",
+          "sourceDir": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-gesture-handler\\android",
           "packageImportPath": "import com.swmansion.gesturehandler.RNGestureHandlerPackage;",
           "packageInstance": "new RNGestureHandlerPackage()",
           "buildTypes": [],
@@ -48,7 +48,7 @@
             "RNGestureHandlerButtonComponentDescriptor",
             "RNGestureHandlerRootViewComponentDescriptor"
           ],
-          "cmakeListsPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/bishan/cine-friends-native/cinefriends-native-chat-frontend/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -57,23 +57,23 @@
       }
     },
     "react-native-reanimated": {
-      "root": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-reanimated",
+      "root": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-reanimated",
       "name": "react-native-reanimated",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-reanimated/RNReanimated.podspec",
+          "podspecPath": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-reanimated\\RNReanimated.podspec",
           "version": "4.5.3",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-reanimated/android",
+          "sourceDir": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-reanimated\\android",
           "packageImportPath": "import com.swmansion.reanimated.ReanimatedPackage;",
           "packageInstance": "new ReanimatedPackage()",
           "buildTypes": [],
           "libraryName": "rnreanimated",
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-reanimated/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/bishan/cine-friends-native/cinefriends-native-chat-frontend/node_modules/react-native-reanimated/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -82,17 +82,17 @@
       }
     },
     "react-native-safe-area-context": {
-      "root": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-safe-area-context",
+      "root": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-safe-area-context",
       "name": "react-native-safe-area-context",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-safe-area-context/react-native-safe-area-context.podspec",
+          "podspecPath": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-safe-area-context\\react-native-safe-area-context.podspec",
           "version": "5.8.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-safe-area-context/android",
+          "sourceDir": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-safe-area-context\\android",
           "packageImportPath": "import com.th3rdwave.safeareacontext.SafeAreaContextPackage;",
           "packageInstance": "new SafeAreaContextPackage()",
           "buildTypes": [],
@@ -101,7 +101,7 @@
             "RNCSafeAreaProviderComponentDescriptor",
             "RNCSafeAreaViewComponentDescriptor"
           ],
-          "cmakeListsPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/bishan/cine-friends-native/cinefriends-native-chat-frontend/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -110,17 +110,17 @@
       }
     },
     "react-native-screens": {
-      "root": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-screens",
+      "root": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-screens",
       "name": "react-native-screens",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-screens/RNScreens.podspec",
+          "podspecPath": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-screens\\RNScreens.podspec",
           "version": "4.23.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-screens/android",
+          "sourceDir": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-screens\\android",
           "packageImportPath": "import com.swmansion.rnscreens.RNScreensPackage;",
           "packageInstance": "new RNScreensPackage()",
           "buildTypes": [],
@@ -140,7 +140,7 @@
             "RNSBottomTabsComponentDescriptor",
             "RNSSafeAreaViewComponentDescriptor"
           ],
-          "cmakeListsPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/bishan/cine-friends-native/cinefriends-native-chat-frontend/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -149,17 +149,17 @@
       }
     },
     "react-native-svg": {
-      "root": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-svg",
+      "root": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-svg",
       "name": "react-native-svg",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-svg/RNSVG.podspec",
+          "podspecPath": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-svg\\RNSVG.podspec",
           "version": "15.15.5",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-svg/android",
+          "sourceDir": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-svg\\android",
           "packageImportPath": "import com.horcrux.svg.SvgPackage;",
           "packageInstance": "new SvgPackage()",
           "buildTypes": [],
@@ -195,7 +195,7 @@
             "RNSVGTSpanComponentDescriptor",
             "RNSVGUseComponentDescriptor"
           ],
-          "cmakeListsPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/bishan/cine-friends-native/cinefriends-native-chat-frontend/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -204,23 +204,23 @@
       }
     },
     "react-native-worklets": {
-      "root": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-worklets",
+      "root": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-worklets",
       "name": "react-native-worklets",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-worklets/RNWorklets.podspec",
+          "podspecPath": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-worklets\\RNWorklets.podspec",
           "version": "0.10.3",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-worklets/android",
+          "sourceDir": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\node_modules\\react-native-worklets\\android",
           "packageImportPath": "import com.swmansion.worklets.WorkletsPackage;",
           "packageInstance": "new WorkletsPackage()",
           "buildTypes": [],
           "libraryName": "rnworklets",
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/node_modules/react-native-worklets/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/bishan/cine-friends-native/cinefriends-native-chat-frontend/node_modules/react-native-worklets/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -391,7 +391,7 @@
         {
           "name": "--path <path>",
           "description": "Path to the React Native project root.",
-          "default": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend"
+          "default": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend"
         },
         {
           "name": "--platform <string>",
@@ -447,7 +447,8 @@
         },
         {
           "name": "--terminal <string>",
-          "description": "Launches the Metro Bundler in a new window using the specified terminal path."
+          "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
+          "default": "cmd.exe"
         },
         {
           "name": "--binary-path <string>",
@@ -614,7 +615,8 @@
         },
         {
           "name": "--terminal <string>",
-          "description": "Launches the Metro Bundler in a new window using the specified terminal path."
+          "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
+          "default": "cmd.exe"
         },
         {
           "name": "--appId <string>",
@@ -689,7 +691,7 @@
   "assets": [],
   "project": {
     "ios": {
-      "sourceDir": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/ios",
+      "sourceDir": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\ios",
       "xcodeProject": {
         "name": "tempApp.xcworkspace",
         "path": ".",
@@ -698,7 +700,7 @@
       "assets": []
     },
     "android": {
-      "sourceDir": "/Users/smit/bishan/TS/learning/cinefriendzchat/frontend/android",
+      "sourceDir": "C:\\bishan\\cine-friends-native\\cinefriends-native-chat-frontend\\android",
       "appName": "app",
       "packageName": "com.tempapp",
       "applicationId": "com.tempapp",

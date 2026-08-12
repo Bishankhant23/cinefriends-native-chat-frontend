@@ -2,8 +2,8 @@ import axios from 'axios';
 import storageService from './storageService';
 import { Platform } from 'react-native';
 
-// export const BASE_URL = 'https://cinefriends-native-chat-backend.onrender.com/api'; //Platform.OS === 'android' ? 'http://10.0.2.2:5001/api' : 'http://localhost:5001/api';
-export const BASE_URL = 'http://localhost:5001/api'; //Platform.OS === 'android' ? 'http://10.0.2.2:5001/api' : 'http://localhost:5001/api';
+export const BASE_URL = process.env.BACKEND_URL || 'https://cinefriends-native-chat-backend.onrender.com/api';
+
 
 const apiInstance = axios.create({
   baseURL: BASE_URL,

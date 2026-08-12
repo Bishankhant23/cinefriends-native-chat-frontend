@@ -44,7 +44,7 @@
     "@babel/preset-react": "^7.29.7",
     "@babel/preset-typescript": "^7.29.7",
     "@react-native-community/cli": "^20.2.0",
-    "@react-native/babel-preset": "0.83.10",
+    "@react-native/babel-preset": "^0.83.10",
     "@react-native/metro-config": "0.83.10",
     "@types/react": "^19.2.0",
     "babel-loader": "^10.1.1",

@@ -166,11 +166,33 @@ export const fetchTopicMessagesThunk = createAsyncThunk(
   ) => {
     try {
       const response = await apiInstance.get(`/topics/${tmdbId}/messages`, {
-        params: { subTopic, isSpoiler },
+        params: { subTopic, isSpoiler, limit: 10 },
       });
-      return { messages: response.data.messages, topic: response.data.topic };
+      return { messages: response.data.messages, topic: response.data.topic, hasMore: response.data.hasMore };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to load messages');
+    }
+  }
+);
+
+export const fetchOlderMessagesThunk = createAsyncThunk(
+  'topic/fetchOlderMessages',
+  async (
+    {
+      tmdbId,
+      subTopic = 'general',
+      isSpoiler = false,
+      before,
+    }: { tmdbId: number; subTopic?: string; isSpoiler?: boolean; before: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await apiInstance.get(`/topics/${tmdbId}/messages`, {
+        params: { subTopic, isSpoiler, before, limit: 10 },
+      });
+      return { messages: response.data.messages, hasMore: response.data.hasMore };
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to load older messages');
     }
   }
 );
@@ -344,6 +366,13 @@ const topicSlice = createSlice({
       })
       .addCase(fetchTopicMessagesThunk.rejected, (state) => {
         state.isMessagesLoading = false;
+      })
+      // Fetch Older Messages (Pagination)
+      .addCase(fetchOlderMessagesThunk.fulfilled, (state, action) => {
+        const newMessages = action.payload.messages;
+        const existingIds = new Set(state.activeMessages.map((m) => m.id));
+        const filteredNewMessages = newMessages.filter((m: ChatMessage) => !existingIds.has(m.id));
+        state.activeMessages = [...filteredNewMessages, ...state.activeMessages];
       });
   },
 });

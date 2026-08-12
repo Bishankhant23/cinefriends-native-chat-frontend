@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MessageSquare, Flame, User } from 'lucide-react-native';
@@ -18,9 +19,9 @@ export const MainTabNavigator = () => {
         tabBarStyle: {
           backgroundColor: '#1C1B17',
           borderTopColor: '#2D2B24',
-          height: 60 + insets.bottom,
-          paddingBottom: insets.bottom > 0 ? insets.bottom : 8,
-          paddingTop: 8,
+          height: Platform.OS === 'web' ? 56 : 60 + insets.bottom,
+          paddingBottom: Platform.OS === 'web' ? undefined : (insets.bottom > 0 ? insets.bottom : 8),
+          paddingTop: Platform.OS === 'web' ? undefined : 8,
         },
         tabBarActiveTintColor: '#CBBD93',
         tabBarInactiveTintColor: '#706D63',
