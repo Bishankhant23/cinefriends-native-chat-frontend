@@ -197,6 +197,35 @@ export const fetchOlderMessagesThunk = createAsyncThunk(
   }
 );
 
+export const fetchReplyContextThunk = createAsyncThunk(
+  'topic/fetchReplyContext',
+  async (
+    {
+      tmdbId,
+      replyToId,
+      before,
+      subTopic = 'general',
+      isSpoiler = false,
+    }: {
+      tmdbId: number;
+      replyToId: string;
+      before?: string;
+      subTopic?: string;
+      isSpoiler?: boolean;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await apiInstance.get(`/topics/${tmdbId}/messages/${replyToId}/context`, {
+        params: { before, subTopic, isSpoiler },
+      });
+      return response.data; // { messages: ChatMessage[], tooFar: boolean, parentMessage: ChatMessage }
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to load reply context');
+    }
+  }
+);
+
 const topicSlice = createSlice({
   name: 'topic',
   initialState,
@@ -373,6 +402,15 @@ const topicSlice = createSlice({
         const existingIds = new Set(state.activeMessages.map((m) => m.id));
         const filteredNewMessages = newMessages.filter((m: ChatMessage) => !existingIds.has(m.id));
         state.activeMessages = [...filteredNewMessages, ...state.activeMessages];
+      })
+      // Fetch Reply Context (For scrolled-back replies)
+      .addCase(fetchReplyContextThunk.fulfilled, (state, action) => {
+        const { messages, tooFar } = action.payload;
+        if (!tooFar && messages && messages.length > 0) {
+          const existingIds = new Set(state.activeMessages.map((m) => m.id));
+          const filteredNewMessages = messages.filter((m: ChatMessage) => !existingIds.has(m.id));
+          state.activeMessages = [...filteredNewMessages, ...state.activeMessages];
+        }
       });
   },
 });

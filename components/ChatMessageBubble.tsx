@@ -8,9 +8,17 @@ interface ChatMessageBubbleProps {
   message: ChatMessage;
   isSelf: boolean;
   onLongPress?: () => void;
+  onPressParent?: (replyToId: string) => void;
+  highlighted?: boolean;
 }
 
-export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({ message, isSelf, onLongPress }) => {
+export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({
+  message,
+  isSelf,
+  onLongPress,
+  onPressParent,
+  highlighted,
+}) => {
   const timeFormatted = message.createdAt
     ? format(new Date(message.createdAt), 'h:mm a')
     : '';
@@ -26,7 +34,15 @@ export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({ message, i
   }
 
   return (
-    <View className={`flex-row my-1.5 px-3.5 items-center ${isSelf ? 'justify-end' : 'justify-start'}`}>
+    <View
+      className={`flex-row py-2 px-3.5 items-center transition-all duration-300 ${
+        isSelf ? 'justify-end' : 'justify-start'
+      } ${
+        highlighted
+          ? 'bg-[#CBBD93]/15 border-y border-[#CBBD93]/35'
+          : 'border-y border-transparent'
+      }`}
+    >
       {/* Reply Button on the left for own messages */}
       {isSelf && onLongPress && (
         <TouchableOpacity
@@ -42,8 +58,12 @@ export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({ message, i
         onLongPress={onLongPress}
         onPress={onLongPress} // Support single tap for reply on web/desktop too
         style={{ maxWidth: '75%' }}
-        className={`px-3.5 py-2.5 rounded-2xl ${
-          isSelf
+        className={`px-3.5 py-2.5 rounded-2xl transition-all duration-300 ${
+          highlighted
+            ? isSelf
+              ? 'bg-[#CBBD93]/35 border border-[#CBBD93] rounded-br-xs scale-[1.01]'
+              : 'bg-[#CBBD93]/25 border border-[#CBBD93]/50 rounded-bl-xs scale-[1.01]'
+            : isSelf
             ? 'bg-[#CBBD93]/10 border border-[#CBBD93]/30 rounded-br-xs'
             : 'bg-darkElevated border border-border rounded-bl-xs'
         }`}
@@ -56,14 +76,22 @@ export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({ message, i
 
         {/* Reply Quote Header */}
         {message.replyToUser && (
-          <View className="bg-darkBg/60 border-l-2 border-[#CBBD93] px-2.5 py-1.5 rounded-lg mb-2">
+          <TouchableOpacity
+            activeOpacity={onPressParent && message.replyToId ? 0.7 : 1}
+            onPress={() => {
+              if (onPressParent && message.replyToId) {
+                onPressParent(message.replyToId);
+              }
+            }}
+            className="bg-darkBg/60 border-l-2 border-[#CBBD93] px-2.5 py-1.5 rounded-lg mb-2"
+          >
             <Text className="text-[#CBBD93] font-bold text-[10px] uppercase tracking-wider">
               @{message.replyToUser}
             </Text>
             <Text className="text-[#9C988F] text-xs mt-0.5" numberOfLines={2}>
               {message.replyToContent}
             </Text>
-          </View>
+          </TouchableOpacity>
         )}
 
         <Text className="text-offWhite text-sm leading-5">{message.content}</Text>

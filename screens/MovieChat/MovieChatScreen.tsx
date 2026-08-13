@@ -12,6 +12,7 @@ import {
   ScrollView,
   Modal,
   RefreshControl,
+  Pressable,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -35,6 +36,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   fetchTopicMessagesThunk,
   fetchOlderMessagesThunk,
+  fetchReplyContextThunk,
   addRealtimeMessage,
   ChatMessage,
   leaveTopicThunk,
@@ -45,6 +47,7 @@ import {
 import socketClient from '../../services/socketClient';
 import { ChatMessageBubble } from '../../components/ChatMessageBubble';
 import { MovieInfoModal } from '../../components/MovieInfoModal';
+import { ParentMessageModal } from '../../components/ParentMessageModal';
 
 const SUB_TOPICS = [
   { id: 'general', label: 'General', icon: MessageSquare },
@@ -68,6 +71,7 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
   const prevHeightRef = useRef(0);
   const currentScrollOffsetRef = useRef(0);
   const shouldAdjustScrollRef = useRef(false);
+  const ignoreScrollTriggerRef = useRef(false);
 
   const currentUser = useAppSelector((state) => state.user.user);
   const { activeMessages, activeTopic, isMessagesLoading, myTopics } = useAppSelector((state) => state.topic);
@@ -83,6 +87,87 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
   const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
+
+  // States for context loading and parent preview modal
+  const [isContextLoading, setIsContextLoading] = useState(false);
+  const [parentModalVisible, setParentModalVisible] = useState(false);
+  const [previewMessage, setPreviewMessage] = useState<ChatMessage | null>(null);
+
+  const handlePressParent = async (replyToId: string) => {
+    // Prevent triggering handleLoadMore when scrolling programmatically
+    ignoreScrollTriggerRef.current = true;
+
+    // 1. Check if the parent message is already loaded locally
+    const index = activeMessages.findIndex((m) => m.id === replyToId);
+    if (index !== -1) {
+      setHighlightedMessageId(replyToId);
+      flatListRef.current?.scrollToIndex({
+        index,
+        animated: true,
+        viewPosition: 0.5,
+      });
+      setTimeout(() => {
+        ignoreScrollTriggerRef.current = false;
+      }, 1000);
+      return;
+    }
+
+    // 2. Fetch context slice from backend
+    if (isContextLoading) {
+      ignoreScrollTriggerRef.current = false;
+      return;
+    }
+    setIsContextLoading(true);
+
+    try {
+      const oldestMessage = activeMessages[0];
+      const resultAction = await dispatch(
+        fetchReplyContextThunk({
+          tmdbId: Number(tmdbId),
+          replyToId,
+          before: oldestMessage?.createdAt,
+          subTopic,
+          isSpoiler,
+        })
+      );
+
+      if (fetchReplyContextThunk.fulfilled.match(resultAction)) {
+        const { messages, tooFar, parentMessage } = resultAction.payload;
+        if (!tooFar && messages && messages.length > 0) {
+          const indexInPrepended = messages.findIndex((m: ChatMessage) => m.id === replyToId);
+          if (indexInPrepended !== -1) {
+            setHighlightedMessageId(replyToId);
+            // Give FlatList a frame to register layout update
+            setTimeout(() => {
+              flatListRef.current?.scrollToIndex({
+                index: indexInPrepended,
+                animated: true,
+                viewPosition: 0.5,
+              });
+              setTimeout(() => {
+                ignoreScrollTriggerRef.current = false;
+              }, 1000);
+            }, 100);
+          } else {
+            ignoreScrollTriggerRef.current = false;
+          }
+        } else {
+          // If too far or no messages, open the parent preview modal
+          setPreviewMessage(parentMessage);
+          setParentModalVisible(true);
+          ignoreScrollTriggerRef.current = false;
+        }
+      } else {
+        ignoreScrollTriggerRef.current = false;
+      }
+    } catch (err) {
+      console.error('Failed to load parent message context:', err);
+      ignoreScrollTriggerRef.current = false;
+    } finally {
+      setIsContextLoading(false);
+    }
+  };
 
   // Scroll to bottom once after initial messages finish loading
   useEffect(() => {
@@ -219,6 +304,14 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       className="flex-1 bg-darkBg"
     >
+      <Pressable
+        onPress={() => {
+          if (highlightedMessageId) {
+            setHighlightedMessageId(null);
+          }
+        }}
+        className="flex-1"
+      >
       {/* WhatsApp Header */}
       <View
         style={{ paddingTop: Math.max(insets.top, 16), paddingBottom: 12 }}
@@ -294,6 +387,7 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
           ref={flatListRef}
           data={activeMessages}
           keyExtractor={(item) => item.id}
+          extraData={highlightedMessageId}
           contentContainerStyle={{ paddingVertical: 12 }}
           maintainVisibleContentPosition={{
             minIndexForVisible: 0,
@@ -317,6 +411,10 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
           onScroll={(event) => {
             const { contentOffset } = event.nativeEvent;
             currentScrollOffsetRef.current = contentOffset.y;
+
+            if (ignoreScrollTriggerRef.current) {
+              return;
+            }
 
             if (
               contentOffset.y <= 10 &&
@@ -344,11 +442,23 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
               shouldAdjustScrollRef.current = false;
             }
           }}
+          onScrollToIndexFailed={(info) => {
+            const wait = new Promise((resolve) => setTimeout(resolve, 50));
+            wait.then(() => {
+              flatListRef.current?.scrollToIndex({
+                index: info.index,
+                animated: true,
+                viewPosition: 0.5,
+              });
+            });
+          }}
           renderItem={({ item }) => (
             <ChatMessageBubble
               message={item}
               isSelf={item.senderId === currentUser?.id}
               onLongPress={() => setReplyingTo(item)}
+              onPressParent={handlePressParent}
+              highlighted={highlightedMessageId === item.id}
             />
           )}
         />
@@ -576,6 +686,30 @@ export const MovieChatScreen: React.FC<{ route: any; navigation: any }> = ({
           navigation.goBack();
         }}
       />
+
+      {/* Parent Message Preview Popup Modal */}
+      <ParentMessageModal
+        visible={parentModalVisible}
+        message={previewMessage}
+        onClose={() => {
+          setParentModalVisible(false);
+          setPreviewMessage(null);
+        }}
+      />
+
+      {/* Context Loading Overlay Spinner */}
+      {isContextLoading && (
+        <View 
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, elevation: 10 }}
+          className="bg-black/60 items-center justify-center"
+        >
+          <View className="bg-darkSurface border border-border p-5 rounded-2xl flex-row items-center">
+            <ActivityIndicator size="small" color="#CBBD93" />
+            <Text className="text-offWhite font-semibold text-sm ml-3.5">Locating original message...</Text>
+          </View>
+        </View>
+      )}
+      </Pressable>
     </KeyboardAvoidingView>
   );
 };
